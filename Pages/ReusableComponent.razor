@@ -1,0 +1,20 @@
+@using AdvancedBlazorComponents.Pages
+
+<ChildComponent @ref="childComponent" OnNotifyParent="HandleNotification" />
+
+@if (alert)
+{
+    <p class="danger">Alert</p>
+}
+
+@code {
+    private ChildComponent childComponent;
+    private bool alert = false;
+
+    private void HandleNotification()
+    {
+        // Logic to handle notifications from the child component
+    alert = true;
+ 	 Console.WriteLine("Notification received from child component");
+    }
+}

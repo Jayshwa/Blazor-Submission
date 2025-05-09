@@ -1,0 +1,20 @@
+@page "/events/details/{eventName}"
+@using AdvancedBlazorComponents
+@inject NavigationManager NavigationManager
+
+<h1>Event Details</h1>
+
+<p><strong>Event Name:</strong> @EventName</p>
+<p>More details about the event will go here.</p>
+
+<button @onclick="GoBack">Back to Events</button>
+
+@code {
+    [Parameter]
+    public string EventName { get; set; } = string.Empty;
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/events");
+    }
+}

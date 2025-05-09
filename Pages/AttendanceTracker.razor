@@ -1,0 +1,83 @@
+@page "/attendance"
+@using AdvancedBlazorComponents
+
+<h3>Attendance Tracker</h3>
+
+<div>
+    <label for="event">Select Event:</label>
+    <select id="event" @bind="selectedEvent" class="form-control">
+        @foreach (var eventItem in events)
+        {
+            <option value="@eventItem.Name">@eventItem.Name</option>
+        }
+    </select>
+</div>
+
+<div class="mt-3">
+    <label for="attendee">Attendee Name:</label>
+    <input id="attendee" @bind="attendeeName" class="form-control" placeholder="Enter attendee name" />
+    <button class="btn btn-primary mt-2" @onclick="MarkAttendance">Mark Attendance</button>
+</div>
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success mt-3">@successMessage</div>
+}
+
+<h4 class="mt-4">Attendees for @selectedEvent</h4>
+@if (attendanceList.ContainsKey(selectedEvent) && attendanceList[selectedEvent].Any())
+{
+    <ul>
+        @foreach (var attendee in attendanceList[selectedEvent])
+        {
+            <li>@attendee</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No attendees yet.</p>
+}
+
+@code {
+    private List<Event> events = new List<Event>();
+    private string selectedEvent = string.Empty;
+    private string attendeeName = string.Empty;
+    private string successMessage = string.Empty;
+
+    // Dictionary to track attendance for each event
+    private Dictionary<string, List<string>> attendanceList = new();
+
+    protected override void OnInitialized()
+    {
+        // Fetch events from the DataService
+        DataService dataService = new DataService();
+        events = dataService.GetEvents();
+
+        // Initialize attendance list for each event
+        foreach (var eventItem in events)
+        {
+            attendanceList[eventItem.Name] = new List<string>();
+        }
+
+        // Set the first event as the default selected event
+        if (events.Any())
+        {
+            selectedEvent = events.First().Name;
+        }
+    }
+
+    private void MarkAttendance()
+    {
+        if (!string.IsNullOrWhiteSpace(attendeeName) && !string.IsNullOrWhiteSpace(selectedEvent))
+        {
+            attendanceList[selectedEvent].Add(attendeeName);
+            successMessage = $"{attendeeName} has been marked as attending {selectedEvent}.";
+            attendeeName = string.Empty; // Clear the input field
+        }
+        else
+        {
+            successMessage = "Please enter a valid attendee name.";
+        }
+    }
+}

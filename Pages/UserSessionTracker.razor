@@ -1,0 +1,34 @@
+@page "/session"
+@inject UserSessionService UserSessionService
+
+<h3>User Session Tracker</h3>
+
+@if (UserSessionService.UserName == null)
+{
+    <div>
+        <label for="username">Enter your name:</label>
+        <input id="username" @bind="userName" class="form-control" />
+        <button class="btn btn-primary" @onclick="StartSession">Start Session</button>
+    </div>
+}
+else
+{
+    <p>Welcome, @UserSessionService.UserName!</p>
+    <p>Session started at: @UserSessionService.SessionStartTime</p>
+    <p>Session duration: @UserSessionService.GetSessionDuration().ToString("hh\\:mm\\:ss")</p>
+    <button class="btn btn-danger" @onclick="EndSession">End Session</button>
+}
+
+@code {
+    private string userName = string.Empty;
+
+    private void StartSession()
+    {
+        UserSessionService.StartSession(userName);
+    }
+
+    private void EndSession()
+    {
+        UserSessionService.EndSession();
+    }
+}

@@ -1,0 +1,31 @@
+@page "/events/register/{eventName}"
+@using AdvancedBlazorComponents
+@inject NavigationManager NavigationManager
+
+<h1>Register for @EventName</h1>
+
+<form>
+    <label>
+        Name:
+        <input type="text" />
+    </label>
+    <br />
+    <label>
+        Email:
+        <input type="email" />
+    </label>
+    <br />
+    <button type="submit">Register</button>
+</form>
+
+<button @onclick="GoBack">Back to Events</button>
+
+@code {
+    [Parameter]
+    public string EventName { get; set; } = string.Empty;
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/events");
+    }
+}

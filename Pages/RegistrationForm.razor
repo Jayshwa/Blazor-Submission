@@ -1,0 +1,73 @@
+@page "/register"
+@using System.ComponentModel.DataAnnotations
+@using AdvancedBlazorComponents
+@using AdvancedBlazorComponents.Models
+
+<h3>Event Registration</h3>
+
+<EditForm Model="@registrationModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="name">Name:</label>
+        <input id="name" @bind="registrationModel.Name" class="form-control" />
+        <span class="text-danger">@validationMessages["Name"]</span>
+    </div>
+
+    <div>
+        <label for="email">Email:</label>
+        <input id="email" type="email" @bind="registrationModel.Email" class="form-control" />
+        <span class="text-danger">@validationMessages["Email"]</span>
+    </div>
+
+    <div>
+        <label for="event">Event:</label>
+        <select id="event" @bind="registrationModel.SelectedEvent" class="form-control">
+            @foreach (var eventItem in events)
+            {
+                <option value="@eventItem.Name">@eventItem.Name</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</EditForm>
+
+@if (successMessage != null)
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+
+@code {
+    private RegistrationModel registrationModel = new RegistrationModel();
+    private List<Event> events = new List<Event>();
+    private string? successMessage;
+    private Dictionary<string, string> validationMessages = new();
+
+    protected override void OnInitialized()
+    {
+        // Fetch events from the DataService
+        DataService dataService = new DataService();
+        events = dataService.GetEvents();
+    }
+
+    private void HandleValidSubmit()
+    {
+        successMessage = $"Thank you, {registrationModel.Name}, for registering for {registrationModel.SelectedEvent}!";
+        validationMessages.Clear();
+    }
+
+public class RegistrationModel
+{
+    [Required(ErrorMessage = "Name is required.")]
+    public string Name { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Email is required.")]
+    [EmailAddress(ErrorMessage = "Invalid email address.")]
+    public string Email { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Please select an event.")]
+    public string SelectedEvent { get; set; } = string.Empty;
+}
+}

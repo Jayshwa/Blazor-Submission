@@ -1,0 +1,38 @@
+@page "/events"
+@using AdvancedBlazorComponents
+
+<h1>Upcoming Events</h1>
+
+<input type="text" @bind="EventName" placeholder="Enter event name" />
+<button @onclick="AddEvent">Add Event</button>
+
+
+<ul>
+    @foreach (var eventItem in events)
+    {
+        <EventCard EventName="@eventItem.Name"/>
+    }
+</ul>
+
+@code {
+    private List<Event> events = new List<Event>();
+    private string EventName;
+
+    protected override void OnInitialized()
+    {
+        // Fetch events from the DataService
+        DataService dataService = new DataService();
+        events = dataService.GetEvents();
+    }
+
+    private void AddEvent()
+    {
+        Event newEvent = new Event
+        {
+            Name = EventName
+        };
+
+        events.Add(newEvent);
+        EventName = string.Empty; // Clear the input field after adding
+    }
+}
